@@ -18,5 +18,6 @@ namespace SMTRPZ_IT_company.Model
 
         public Employee employee { get; set; }
         public Department department { get; set; }
+
     }
 }
