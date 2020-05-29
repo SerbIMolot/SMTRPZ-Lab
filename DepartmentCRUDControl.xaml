@@ -1,0 +1,38 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:interact="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:viewModel="clr-namespace:SMTRPZ_IT_company.ModelView"
+             xmlns:local="clr-namespace:SMTRPZ_IT_company" x:Class="SMTRPZ_IT_company.DepartmentCRUDControl"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <viewModel:DepartmentCRUDVM x:Key="depVM"/>
+    </UserControl.Resources>
+    <Grid DataContext="{StaticResource depVM}" Margin="0,10,0,0">
+        <interact:Interaction.Triggers>
+            <interact:EventTrigger EventName="Loaded">
+                <interact:InvokeCommandAction Command="{Binding LoadedCommand}" />
+            </interact:EventTrigger>
+        </interact:Interaction.Triggers>
+        <DataGrid x:Name="DepartmentGrid" Margin="10,94,10,10" ItemsSource="{Binding Departments, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Department name" Binding="{Binding DepartmentName, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="Numer of people" Binding="{Binding NumOfEmployees, UpdateSourceTrigger=PropertyChanged}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Label Content="Department name&#xD;&#xA;" HorizontalAlignment="Left" Margin="4,14,0,0" VerticalAlignment="Top" Height="21" Width="85" FontSize="9"/>
+        <Button x:Name="AddDepartmentBtn" Content="Add department" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="60" Height="17" FontSize="7">
+            <interact:Interaction.Triggers>
+                <interact:EventTrigger EventName="Click">
+                    <interact:InvokeCommandAction Command="{Binding AddBtnCommand}" CommandParameter="{Binding SelectedDepartment}"/>
+                </interact:EventTrigger>
+            </interact:Interaction.Triggers>
+        </Button>
+        <TextBox x:Name="DepartmentNameTXT" HorizontalAlignment="Left" Height="14" TextWrapping="Wrap" Text="{Binding SelectedDepartment.DepartmentName , Mode=TwoWay}" VerticalAlignment="Top" Width="84" Margin="10,35,0,0" FontSize="8"/>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,33 @@
+﻿<Window x:Class="SMTRPZ_IT_company.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SMTRPZ_IT_company.ModelView" 
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+
+    </Window.Resources>
+
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <Button
+            Content="Employees"
+            Command="{Binding GotoView2Command}"          
+            HorizontalAlignment="Right"              
+            Margin="0,10,348,281"
+            VerticalAlignment="Center"
+            Width="75" Height="28">
+        </Button>
+        <Button
+            Content="Departments"
+            Command="{Binding GotoView1Command}"          
+            HorizontalAlignment="Center"              
+            Margin="10,10,432,281"
+            VerticalAlignment="Center"
+            Width="75" Height="28">
+        </Button>
+        <ContentControl Content="{Binding CurrentView}" Margin="0,43,0,0" />
+    </Grid>
+</Window>
