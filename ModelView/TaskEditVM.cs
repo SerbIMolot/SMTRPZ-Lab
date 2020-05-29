@@ -121,6 +121,26 @@ namespace SMTRPZ_IT_company.ModelView
                     }));
             }
         }
+        private RelayCommand deleteCommand;
+        public RelayCommand DeleteCommand
+        {
+            get
+            {
+                return deleteCommand ??
+                    (deleteCommand = new RelayCommand(obj =>
+                    {
+                        var task = obj as TaskVM;
+                        if (string.IsNullOrEmpty(task.Task))
+                        {
+                            return;
+                        }
+
+
+                        tasks.Remove(task);
+                        taskService.Delete(task);
+                    }));
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {

@@ -10,6 +10,7 @@ namespace SMTRPZ_IT_company.BLL.Services
         where T : class
     {
         void Add( T VM );
+        void Delete( T VM );
         T GetById(int? id);
         IEnumerable<T> GetAll();
         void Dispose();

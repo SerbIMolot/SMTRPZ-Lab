@@ -20,7 +20,7 @@ namespace SMTRPZ_IT_company.ModelView
     {
         public EmployeeVM employee { get; set; }
     }
-    public class EmployeeCRUDVM : System.ComponentModel.IDataErrorInfo, INotifyPropertyChanged
+    public class EmployeeCRUDVM : INotifyPropertyChanged
     {
         public event EventHandler<switchTaskViewEventArgs> switchToEditTask;
         private void SwitchToEditTask( switchTaskViewEventArgs e )
@@ -111,26 +111,7 @@ namespace SMTRPZ_IT_company.ModelView
             departments = new ObservableCollection<DepartamentVM>( depService.GetAll() );
 
         }
-        public void addBtnClick(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SelectedEmployee.FirstName)
-                || string.IsNullOrEmpty(SelectedEmployee.LastName))
-            {
-                return;
-            }
-            if (string.IsNullOrEmpty(SelectedEmployee.DepartmentName))
-            {
-                return;
-            }
-            EmployeeVM tempEmployee = new EmployeeVM()
-            {
-                FirstName = SelectedEmployee.FirstName,
-                LastName = SelectedEmployee.LastName,
-                DepartmentName = SelectedEmployee.DepartmentName
-            };
-            emplService.Add(tempEmployee);
 
-        }
         private RelayCommand addBtnCommand;
         public RelayCommand AddBtnCommand
         {
@@ -158,6 +139,33 @@ namespace SMTRPZ_IT_company.ModelView
                         }
                         emplService.Add(empl);
                         employees.Add(emplService.GetAll().SingleOrDefault( e => e.FirstName == empl.FirstName && e.LastName == empl.LastName ));
+                    }));
+            }
+        }
+        private RelayCommand deleteBtnCommand;
+        public RelayCommand DeleteBtnCommand
+        {
+            get
+            {
+                return deleteBtnCommand ??
+                    (deleteBtnCommand = new RelayCommand(obj =>
+                    {
+                        var empl = obj as EmployeeVM;
+                        empl.DepartmentName = selectedDepartment.DepartmentName;
+
+                        ConfirmationWindow win = new ConfirmationWindow("Deleting: " + empl.FirstName + " " + empl.LastName);
+                        win.ShowDialog();
+                        if (win.confirm == false)
+                        {
+                            return;
+                        }
+
+                        if (depService.GetById(SelectedDepartment.DepartmentId) != null )
+                        {
+                            
+                        }
+                        emplService.Delete(empl);
+                        Employees.Remove(empl);
                     }));
             }
         }
@@ -227,28 +235,7 @@ namespace SMTRPZ_IT_company.ModelView
                     })); 
             }
         }
-        public string this[string columnName]
-        {
-            get
-            {
-                string error = String.Empty;
-                switch (columnName)
-                {
-                    case "SelectedEmployee.DepartmentName":
-                        var dep = depService.GetByName(SelectedEmployee.DepartmentName);
-                        if(dep == null)
-                        {
-                            return "Department with that name does not exist";
-                        }
-                        break;
-                }
-                return error;
-            }
-        }
-        public string Error
-        {
-            get { throw new NotImplementedException(); }
-        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")
         {

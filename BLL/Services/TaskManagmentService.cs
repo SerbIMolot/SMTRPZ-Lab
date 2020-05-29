@@ -39,6 +39,21 @@ namespace SMTRPZ_IT_company.BLL.Services
             unitOf.taskRepository.Create( task );
             unitOf.Save();
         }
+        public void Delete(TaskVM taskVM)
+        {
+            var task = unitOf.taskRepository.GetById(taskVM.TaskId);
+
+            if (task == null)
+            {
+                throw new Exception("Task not found id DB");
+            }
+
+            unitOf.taskRepository.Delete(task.taskId);
+
+            unitOf.Save();
+
+
+        }
         public TaskVM GetById(int? id)
         {
             if (id == null)

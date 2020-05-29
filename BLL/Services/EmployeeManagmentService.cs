@@ -36,6 +36,30 @@ namespace SMTRPZ_IT_company.BLL.Services
                 cfg.CreateMap<Department, DepartmentEmployee>();
             }).CreateMapper();
         }
+        public void Delete(EmployeeVM employeeVM)
+        {
+            var employee = unitOf.employeeRepository.GetById(employeeVM.EmployeeId);
+
+            if (employee == null)
+            {
+                throw new Exception("Employee not found id DB");
+            }
+
+            var depEmpl = unitOf.departmentEmployeeRepository.GetByEmployee(employee);
+
+
+
+            if( depEmpl != null  )
+            {
+                unitOf.departmentEmployeeRepository.Delete( depEmpl );
+            }
+
+            unitOf.employeeRepository.Delete(employee.employeeId);
+
+            unitOf.Save();
+
+
+        }
         public void Update(EmployeeVM employeeVM)
         {
             var employee = unitOf.employeeRepository.GetByIdDetached(employeeVM.EmployeeId);

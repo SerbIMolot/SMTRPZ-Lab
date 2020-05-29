@@ -46,7 +46,50 @@ namespace SMTRPZ_IT_company.BLL.Services
            unitOf.departmentRepository.Create(department);
            unitOf.Save();
        }
-       public DepartamentVM GetById(int? id)
+        public void Update(DepartamentVM departamentVM)
+        {
+            var department = unitOf.departmentRepository.GetByIdDetached(departamentVM.DepartmentId);
+
+            if (department == null)
+            {
+                throw new Exception("Department not found id DB");
+            }
+
+            var newDep = AutomapHelper.MergeInto<Department>(vmDepartment, departamentVM);
+
+            unitOf.departmentRepository.Update(newDep);
+
+            unitOf.Save();
+
+
+        }
+        public void Delete(DepartamentVM departamentVM)
+        {
+            var dep = unitOf.departmentRepository.GetById(departamentVM.DepartmentId);
+
+            if (dep == null)
+            {
+                throw new Exception("Employee not found id DB");
+            }
+
+            var depEmpl = unitOf.departmentEmployeeRepository.GetByDepartment(dep);
+
+            if( depEmpl != null && depEmpl.Count != 0 )
+            {
+                foreach( var de in depEmpl )
+                {
+                    unitOf.departmentEmployeeRepository.Delete(de);
+                }
+            }
+
+
+            unitOf.departmentRepository.Delete(dep.departmentId);
+
+            unitOf.Save();
+
+
+        }
+        public DepartamentVM GetById(int? id)
        {
            if (id == null)
                throw new Exception("Id of employee not set");

@@ -78,6 +78,49 @@ namespace SMTRPZ_IT_company.ModelView
                     }));
             }
         }
+        private RelayCommand deleteBtnCommand;
+        public RelayCommand DeleteBtnCommand
+        {
+            get
+            {
+                return deleteBtnCommand ??
+                    (deleteBtnCommand = new RelayCommand(obj =>
+                    {
+                        var dep = obj as DepartamentVM;
+                        if ( string.IsNullOrEmpty(dep.DepartmentName ) )
+                        {
+                            return;
+                        }
+                        Departments.Remove(dep);
+                        depService.Delete(dep);
+                    }));
+            }
+        }
+
+        private RelayCommand updateCommand;
+        public RelayCommand UpdateCommand
+        {
+            get
+            {
+                return updateCommand ??
+                    (updateCommand = new RelayCommand(obj =>
+                    {
+                        var dep = obj as DepartamentVM;
+                        
+                        if (string.IsNullOrEmpty(dep.DepartmentName) )
+                        {
+                            return;
+                        }
+                        depService.Update(dep);
+
+                        var newDep = depService.GetAll().FirstOrDefault(e => e.DepartmentId == dep.DepartmentId);
+                        if (newDep != null)
+                        {
+                            Departments[departments.IndexOf(dep)] = newDep;
+                        }
+                    }));
+            }
+        }
         private RelayCommand loadedCommand;
         public RelayCommand LoadedCommand
         {

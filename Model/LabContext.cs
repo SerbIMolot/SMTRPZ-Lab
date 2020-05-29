@@ -14,7 +14,6 @@ namespace SMTRPZ_IT_company.Model
             public DbSet<Employee> Employees { get; set; }
             public DbSet<EmplTask> Tasks { get; set; }
 
-
             public LabContext()
                 : base("DefaultConnection")
             {

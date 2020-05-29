@@ -38,11 +38,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -65,25 +71,50 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BLL\Services\DepartmentManagmentService.cs" />
+    <Compile Include="BLL\Services\EmployeeManagmentService.cs" />
+    <Compile Include="BLL\Services\IManagmentService.cs" />
+    <Compile Include="BLL\Services\TaskManagmentService.cs" />
+    <Compile Include="Comand\RelayCommand.cs" />
+    <Compile Include="ConfirmationWindow.xaml.cs">
+      <DependentUpon>ConfirmationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EmployeeCRUD.xaml.cs">
       <DependentUpon>EmployeeCRUD.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\EventArgs.cs" />
+    <Compile Include="Helpers\EventRaiser.cs" />
+    <Compile Include="Helpers\Mapper.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ModelView\DepartamentEmployeeVM.cs" />
+    <Compile Include="ModelView\DepartamentVM.cs" />
+    <Compile Include="ModelView\EmployeeVM.cs" />
+    <Compile Include="ModelView\MainWindowViewModel.cs" />
+    <Compile Include="ModelView\TaskEditVM.cs" />
+    <Compile Include="ModelView\TaskVM.cs" />
+    <Compile Include="ModelView\DepartmentCRUDVM.cs" />
+    <Compile Include="ModelView\EmployeeCRUDVM.cs" />
+    <Compile Include="ModelView\ViewModelBase.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\SQLDepartmentEmployeeRepository.cs" />
     <Compile Include="Repository\SQLDepartmentRepository.cs" />
     <Compile Include="Repository\SQLEmployeeRepository.cs" />
     <Compile Include="Repository\SQLTaskRepository.cs" />
-    <Compile Include="DepartmentEmployeeCRUD.xaml.cs">
-      <DependentUpon>DepartmentEmployeeCRUD.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="TaskCRUD.xaml.cs">
       <DependentUpon>TaskCRUD.xaml</DependentUpon>
     </Compile>
+    <Page Include="ConfirmationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EmployeeCRUD.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DepartmentCRUD.xaml">
+    <Page Include="DepartmentCRUDControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -96,13 +127,13 @@
     <Compile Include="Model\Employee.cs" />
     <Compile Include="Model\EmplTask.cs" />
     <Compile Include="Model\LabContext.cs" />
-    <Compile Include="DepartmentCRUD.xaml.cs">
-      <DependentUpon>DepartmentCRUD.xaml</DependentUpon>
+    <Compile Include="DepartmentCRUDControl.xaml.cs">
+      <DependentUpon>DepartmentCRUDControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="DepartmentEmployeeCRUD.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TaskCRUD.xaml">
       <SubType>Designer</SubType>

@@ -10,89 +10,53 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SMTRPZ_IT_company.Model;
 using SMTRPZ_IT_company.Repository;
+using SMTRPZ_IT_company.ModelView;
 
 namespace SMTRPZ_IT_company
 {
-    /// <summary>
-    /// Interaction logic for EmployeeCRUD.xaml
-    /// </summary>
-    public partial class EmployeeCRUD : Window
+    public partial class EmployeeCRUD : UserControl
     {
-        public Employee selectedEmployee { get; set; }
+        IRepository<Employee> employees { get; set; }
+        IRepository<DepartmentEmployee> depEmployees { get; set; }
+        SQLDepartmentRepository departments { get; set; }
 
-        public SQLEmployeeRepository EmployeeRepository { get; set; }
-        public LabContext context { get; set; }
+        public EmployeeVM selectedEmployee { get; set; }
+
 
         public EmployeeCRUD()
         {
-            context = new LabContext();
-            selectedEmployee = new Employee();
-            EmployeeRepository = new SQLEmployeeRepository( context );
-
             InitializeComponent();
 
-            UpdateDataGrid();
-        }
-        private void UpdateDataGrid()
-        {
-            EmployeeGrid.ItemsSource = EmployeeRepository.GetList().ToList();
+            DataContext = new EmployeeCRUDVM();
+
         }
 
-        private void FirstNameText_TextChanged(object sender, TextChangedEventArgs e)
+        public EmployeeVM getSelectedEmployee()
         {
-            selectedEmployee.firstName = EmployeeFirstNameText.Text;
+            return selectedEmployee;
         }
-        private void LastNameText_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            selectedEmployee.lastName = EmployeeLastNameText.Text;
-        }
-        private void Create_Click(object sender, RoutedEventArgs e)
-        {
-
-            EmployeeRepository.Create(selectedEmployee);
-            context.SaveChanges();
-
-            UpdateDataGrid();
-        }
-        private void Update_Click(object sender, RoutedEventArgs e)
-        {
-            if (EmployeeRepository.GetById(selectedEmployee.employeeId) != null)
-            {
-                EmployeeRepository.Update(selectedEmployee);
-                context.SaveChanges();
-            }
-            UpdateDataGrid();
-        }
-        private void Delete_Click(object sender, RoutedEventArgs e)
-        {
-            if (EmployeeRepository.GetById(selectedEmployee.employeeId) != null)
-            {
-                EmployeeRepository.Delete(selectedEmployee.employeeId);
-                context.SaveChanges();
-            }
-            UpdateDataGrid();
-        }
-
-        private void EmployeeGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        private void EmployeeGridSelectedEvent(object sender, SelectionChangedEventArgs e)
         {
             DataGrid dataGrid = sender as DataGrid;
-            Employee rowView = dataGrid.SelectedItem as Employee;
+            EmployeeVM rowView = dataGrid.SelectedItem as EmployeeVM;
 
             if (rowView != null)
             {
-                //DepartamentVM dep = (DataContext).depService.GetByName(rowView.EmployeeName) as DepartamentVM;
-                EmployeeFirstNameText.Text = rowView.firstName;
-                EmployeeLastNameText.Text = rowView.lastName;
 
-                selectedEmployee = rowView;
-                //mehText
-                UpdateBtn.IsEnabled = true;
-                DeleteBtn.IsEnabled = true;
+                firstNameText.Text = rowView.FirstName;
+                lastNameText.Text = rowView.LastName;
+
+                departmentBox.Text = rowView.DepartmentName;
+
+                updateBtn.IsEnabled = true;
+                deleteBtn.IsEnabled = true;
+                editTaskBtn.IsEnabled = true;
             }
-
         }
+
     }
 }

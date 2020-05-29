@@ -31,10 +31,6 @@ namespace SMTRPZ_IT_company.Repository
             db.Entry(empl).State = EntityState.Detached;
             return empl;
         }
-        //public Employee GetByName( string name )
-        //{
-        //    return db.Employees.Find(id);
-        //}
 
         public void Create(Employee employee)
         {

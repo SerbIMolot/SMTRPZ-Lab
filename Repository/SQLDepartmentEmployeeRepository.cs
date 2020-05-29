@@ -39,9 +39,10 @@ namespace SMTRPZ_IT_company.Repository
         {
             return db.DepartmentsEmployees.Where( d => d.departmentId == department.departmentId ).ToList();
         }
+
         public int EmployeesInDepartment(Department department)
         {
-            return db.DepartmentsEmployees.Count( d => d.departmentId == department.departmentId );
+            return db.DepartmentsEmployees.Count(d => d.departmentId == department.departmentId);
         }
 
         public void Create(DepartmentEmployee deprEmpl)

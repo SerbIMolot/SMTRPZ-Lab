@@ -18,21 +18,209 @@
                 <interact:InvokeCommandAction Command="{Binding LoadedCommand}" />
             </interact:EventTrigger>
         </interact:Interaction.Triggers>
-        <DataGrid x:Name="DepartmentGrid" Margin="10,94,10,10" ItemsSource="{Binding Departments, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
+        <DataGrid x:Name="DepartmentGrid" Margin="10,94,10,10" ItemsSource="{Binding Departments, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedDepartment, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Department name" Binding="{Binding DepartmentName, UpdateSourceTrigger=PropertyChanged}"/>
                 <DataGridTextColumn Header="Numer of people" Binding="{Binding NumOfEmployees, UpdateSourceTrigger=PropertyChanged}"/>
             </DataGrid.Columns>
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}" >
+                    <Setter Property="Background" Value="Black" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="1 1 1 1"/>
+                    <Setter Property="Margin" Value="-1,-1,0,0" />
+                    <Setter Property="Height" Value="28" />
+                    <Setter Property="Width" Value="auto"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.Resources>
         </DataGrid>
-        <Label Content="Department name&#xD;&#xA;" HorizontalAlignment="Left" Margin="4,14,0,0" VerticalAlignment="Top" Height="21" Width="85" FontSize="9"/>
-        <Button x:Name="AddDepartmentBtn" Content="Add department" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="60" Height="17" FontSize="7">
+        <Label Content="Department name&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="110"/>
+        <Button x:Name="AddDepartmentBtn" Content="Add department" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="80" Height="22" FontSize="10">
             <interact:Interaction.Triggers>
                 <interact:EventTrigger EventName="Click">
                     <interact:InvokeCommandAction Command="{Binding AddBtnCommand}" CommandParameter="{Binding SelectedDepartment}"/>
                 </interact:EventTrigger>
             </interact:Interaction.Triggers>
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.250" To="0" 
+                                                            Storyboard.TargetProperty="BorderThickness" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="23" 
+                                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="81" 
+                                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.250" To="1" 
+                                                            Storyboard.TargetProperty="BorderThickness" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="22" 
+                                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="80" 
+                                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True" >
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.550" To="23" 
+                                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="78" 
+                                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.550" To="22" 
+                                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="80" 
+                                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
         </Button>
-        <TextBox x:Name="DepartmentNameTXT" HorizontalAlignment="Left" Height="14" TextWrapping="Wrap" Text="{Binding SelectedDepartment.DepartmentName , Mode=TwoWay}" VerticalAlignment="Top" Width="84" Margin="10,35,0,0" FontSize="8"/>
+        <TextBox x:Name="DepartmentNameTXT" HorizontalAlignment="Left" Height="20" TextWrapping="Wrap" Text="{Binding SelectedDepartment.DepartmentName , Mode=TwoWay}" VerticalAlignment="Top" Width="110" Margin="10,35,0,0" FontSize="10"/>
+        <Button x:Name="UpdateBtn" Content="Update" HorizontalAlignment="Left" Margin="95,67,0,0" VerticalAlignment="Top" Width="80" Height="22" FontSize="10">
+            <interact:Interaction.Triggers>
+                <interact:EventTrigger EventName="Click">
+                    <interact:InvokeCommandAction Command="{Binding UpdateCommand}" CommandParameter="{Binding SelectedDepartment}"/>
+                </interact:EventTrigger>
+            </interact:Interaction.Triggers>
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.250" To="0" 
+                                            Storyboard.TargetProperty="BorderThickness" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="23" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="81" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.250" To="1" 
+                                            Storyboard.TargetProperty="BorderThickness" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="22" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="80" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True" >
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.550" To="23" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="78" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.550" To="22" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="80" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button x:Name="DeleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="180,67,0,0" VerticalAlignment="Top" Width="80" Height="22" FontSize="10">
+            <interact:Interaction.Triggers>
+                <interact:EventTrigger EventName="Click">
+                    <interact:InvokeCommandAction Command="{Binding DeleteBtnCommand}" CommandParameter="{Binding SelectedDepartment}"/>
+                </interact:EventTrigger>
+            </interact:Interaction.Triggers>
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.250" To="0" 
+                                            Storyboard.TargetProperty="BorderThickness" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="23" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="81" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.250" To="1" 
+                                            Storyboard.TargetProperty="BorderThickness" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="22" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="80" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True" >
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.550" To="23" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="78" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.550" To="22" 
+                                            Storyboard.TargetProperty="Height" />
+                                        <DoubleAnimation Duration="0:0:0.550" To="80" 
+                                            Storyboard.TargetProperty="Width" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
     </Grid>
 </UserControl>
