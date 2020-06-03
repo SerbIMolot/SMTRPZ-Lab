@@ -87,9 +87,18 @@ namespace SMTRPZ_IT_company.ModelView
                     (deleteBtnCommand = new RelayCommand(obj =>
                     {
                         var dep = obj as DepartamentVM;
-                        if ( string.IsNullOrEmpty(dep.DepartmentName ) )
+                        if (string.IsNullOrEmpty(dep.DepartmentName))
                         {
                             return;
+                        }
+                        using (var depEmplService = new SQLDepartmentEmployeeRepository(new LabContext()))
+                        {
+                            var depEmplList = depEmplService.GetByDepartmentId( dep.DepartmentId );
+
+                            if ( depEmplList.Count > 0 )
+                            {
+                                depEmplService.DeleteRange(depEmplList);
+                            }
                         }
                         Departments.Remove(dep);
                         depService.Delete(dep);

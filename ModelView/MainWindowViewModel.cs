@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -19,7 +20,7 @@ namespace SMTRPZ_IT_company.ModelView
         private ICommand _gotoView1Command;
         private ICommand _gotoView2Command;
         private ICommand _gotoTaskEditCommand;
-        private object _currentView;
+        private UserControl _currentView;
         private DepartmentCRUDControl DepartmentUC;
         private EmployeeCRUD EmployeeVC;
 
@@ -71,7 +72,7 @@ namespace SMTRPZ_IT_company.ModelView
             }
         }
 
-        public object CurrentView
+        public UserControl CurrentView
         {
             get { return _currentView; }
             set
@@ -81,20 +82,30 @@ namespace SMTRPZ_IT_company.ModelView
             }
         }
 
-        private void GotoView1()
+        private async void GotoView1()
         {
+            if (CurrentView == EmployeeVC)
+            {
+                await ((EmployeeCRUD)CurrentView).FadeOut();
+            }
             CurrentView = DepartmentUC;
+
+            await ((DepartmentCRUDControl)CurrentView).FadeIn();
         }
 
-        private void GotoView2()
+        private async void GotoView2()
         {
+            if (CurrentView == DepartmentUC)
+            {
+                await((DepartmentCRUDControl)CurrentView).FadeOut();
+            }
             CurrentView = EmployeeVC;
+            await ((EmployeeCRUD)CurrentView).FadeIn();
         }
         private void GotoTaskEdit()
         {
             var view2VM = EmployeeVC.EmployeeGrid.DataContext as EmployeeCRUDVM;
             CurrentView = new TaskCRUD( view2VM.SelectedEmployee );
-
         }
 
     }

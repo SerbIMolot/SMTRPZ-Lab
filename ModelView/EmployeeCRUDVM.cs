@@ -153,17 +153,13 @@ namespace SMTRPZ_IT_company.ModelView
                         var empl = obj as EmployeeVM;
                         empl.DepartmentName = selectedDepartment.DepartmentName;
 
-                        ConfirmationWindow win = new ConfirmationWindow("Deleting: " + empl.FirstName + " " + empl.LastName);
+                        ConfirmationWindow win = new ConfirmationWindow("Are you sure you want to delete " + empl.FirstName + " " + empl.LastName + "?");
                         win.ShowDialog();
                         if (win.confirm == false)
                         {
                             return;
                         }
-
-                        if (depService.GetById(SelectedDepartment.DepartmentId) != null )
-                        {
-                            
-                        }
+                        
                         emplService.Delete(empl);
                         Employees.Remove(empl);
                     }));

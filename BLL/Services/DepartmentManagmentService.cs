@@ -72,14 +72,11 @@ namespace SMTRPZ_IT_company.BLL.Services
                 throw new Exception("Employee not found id DB");
             }
 
-            var depEmpl = unitOf.departmentEmployeeRepository.GetByDepartment(dep);
+            var depEmplList = unitOf.departmentEmployeeRepository.GetByDepartment(dep);
 
-            if( depEmpl != null && depEmpl.Count != 0 )
+            if(depEmplList != null && depEmplList.Count != 0 )
             {
-                foreach( var de in depEmpl )
-                {
-                    unitOf.departmentEmployeeRepository.Delete(de);
-                }
+                unitOf.departmentEmployeeRepository.DeleteRange(depEmplList);
             }
 
 

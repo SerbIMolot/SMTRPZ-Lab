@@ -12,9 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Media.Animation;
 using SMTRPZ_IT_company.Model;
 using SMTRPZ_IT_company.Repository;
 using SMTRPZ_IT_company.ModelView;
+using SMTRPZ_IT_company.Helpers;
 
 namespace SMTRPZ_IT_company
 {
@@ -38,6 +40,48 @@ namespace SMTRPZ_IT_company
         public EmployeeVM getSelectedEmployee()
         {
             return selectedEmployee;
+        }
+        public Task FadeIn()
+        {
+            Visibility = System.Windows.Visibility.Visible;
+
+            var a = new DoubleAnimation
+            {
+                From = 0.0,
+                To = 1.0,
+                FillBehavior = FillBehavior.Stop,
+                BeginTime = TimeSpan.FromSeconds(0),
+                Duration = new Duration(TimeSpan.FromSeconds(0.2))
+            };
+            var storyboard = new Storyboard();
+
+            storyboard.Children.Add(a);
+            Storyboard.SetTarget(a, this);
+            Storyboard.SetTargetProperty(a, new PropertyPath(OpacityProperty));
+            storyboard.Completed += delegate { Visibility = System.Windows.Visibility.Visible; };
+
+            return StoryboardExtensions.BeginAsync(storyboard);
+        }
+        public Task FadeOut()
+        {
+            Visibility = System.Windows.Visibility.Visible;
+
+            var a = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                FillBehavior = FillBehavior.Stop,
+                BeginTime = TimeSpan.FromSeconds(0),
+                Duration = new Duration(TimeSpan.FromSeconds(0.2))
+            };
+            var storyboard = new Storyboard();
+
+            storyboard.Children.Add(a);
+            Storyboard.SetTarget(a, this);
+            Storyboard.SetTargetProperty(a, new PropertyPath(OpacityProperty));
+            storyboard.Completed += delegate { Visibility = System.Windows.Visibility.Hidden; };
+
+            return StoryboardExtensions.BeginAsync(storyboard);
         }
         private void EmployeeGridSelectedEvent(object sender, SelectionChangedEventArgs e)
         {

@@ -35,9 +35,17 @@ namespace SMTRPZ_IT_company.Repository
         {
             return db.DepartmentsEmployees.Include( de => de.employee ).SingleOrDefault( e => e.employeeId == employee.employeeId );
         }
+        public DepartmentEmployee GetByEmployeeId( int emplId )
+        {
+            return db.DepartmentsEmployees.Include( de => de.employee ).SingleOrDefault( e => e.employeeId == emplId );
+        }
         public List< DepartmentEmployee> GetByDepartment(Department department)
         {
             return db.DepartmentsEmployees.Where( d => d.departmentId == department.departmentId ).ToList();
+        }
+        public List< DepartmentEmployee> GetByDepartmentId( int departmentId )
+        {
+            return db.DepartmentsEmployees.Where( d => d.departmentId == departmentId ).ToList();
         }
 
         public int EmployeesInDepartment(Department department)
@@ -69,6 +77,10 @@ namespace SMTRPZ_IT_company.Repository
             DepartmentEmployee deprEmpl = db.DepartmentsEmployees.Find(id);
             if (deprEmpl != null)
                 db.DepartmentsEmployees.Remove(deprEmpl);
+        }
+        public void DeleteRange( IEnumerable<DepartmentEmployee> depEmplList )
+        {
+            db.DepartmentsEmployees.RemoveRange(depEmplList);
         }
         public void Delete( DepartmentEmployee deprEmpl )
         {
