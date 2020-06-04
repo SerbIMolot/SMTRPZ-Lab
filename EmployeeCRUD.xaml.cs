@@ -17,14 +17,13 @@ using SMTRPZ_IT_company.Model;
 using SMTRPZ_IT_company.Repository;
 using SMTRPZ_IT_company.ModelView;
 using SMTRPZ_IT_company.Helpers;
+using SMTRPZ_IT_company.BLL.Services;
+using System.Collections.ObjectModel;
 
 namespace SMTRPZ_IT_company
 {
     public partial class EmployeeCRUD : UserControl
     {
-        IRepository<Employee> employees { get; set; }
-        IRepository<DepartmentEmployee> depEmployees { get; set; }
-        SQLDepartmentRepository departments { get; set; }
 
         public EmployeeVM selectedEmployee { get; set; }
 
@@ -43,6 +42,11 @@ namespace SMTRPZ_IT_company
         }
         public Task FadeIn()
         {
+            using (var depMen = new DepartmentManagmentService())
+            {
+                ((EmployeeCRUDVM)EmployeeGrid.DataContext).Departments = new ObservableCollection<DepartmentVM>(depMen.GetAll().ToList());
+            }
+
             Visibility = System.Windows.Visibility.Visible;
 
             var a = new DoubleAnimation

@@ -9,13 +9,6 @@
              d:DesignHeight="300" d:DesignWidth="300"            
              xmlns:local="clr-namespace:SMTRPZ_IT_company">
 
-    <!--<EventTrigger RoutedEvent="Loaded">
-        TODO: FADE IN
-    </EventTrigger>-->
-    <!-- <EventTrigger RoutedEvent="Closed">
-       TODO: FADE OUT
-    </EventTrigger>-->
-
     <UserControl.Resources>
         <viewModel:EmployeeCRUDVM x:Key="emplVM"/>
 

@@ -14,13 +14,13 @@ namespace SMTRPZ_IT_company.ModelView
 {
     public class DepartmentCRUDVM : INotifyPropertyChanged
     {
-        private ObservableCollection<DepartamentVM> departments;
-        public ObservableCollection<DepartamentVM> Departments
+        private ObservableCollection<DepartmentVM> departments;
+        public ObservableCollection<DepartmentVM> Departments
         {
             get
             {
                 if (departments == null)
-                    departments = new ObservableCollection<DepartamentVM>();
+                    departments = new ObservableCollection<DepartmentVM>();
                 return departments;
             }
             set
@@ -29,35 +29,34 @@ namespace SMTRPZ_IT_company.ModelView
                 OnPropertyChanged("Departments");
             }
         }
-        private DepartamentVM selectedDepartment;
-        public DepartamentVM SelectedDepartment
+        private DepartmentVM selectedDepartment;
+        public DepartmentVM SelectedDepartment
         {
-            get 
+            get
             {
                 if (selectedDepartment == null)
-                    selectedDepartment = new DepartamentVM();
+                    selectedDepartment = new DepartmentVM();
                 return selectedDepartment;
             }
             set
             {
-                // обработка изменения свойства
                 selectedDepartment = value;
                 OnPropertyChanged("SelectedDepartment");
             }
         }
-        public UnitOfWork unit;
+
         public DepartmentManagmentService depService;
+
         public DepartmentCRUDVM()
         {
-            unit = UnitOfWork.GetInstance();
             depService = new DepartmentManagmentService();
 
             IMapper mapper = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Department, DepartamentVM>();
+                cfg.CreateMap<Department, DepartmentVM>();
             }).CreateMapper();
-            
-            departments = new ObservableCollection<DepartamentVM>(depService.GetAll());
+
+            departments = new ObservableCollection<DepartmentVM>(depService.GetAll());
 
         }
         private RelayCommand addBtnCommand;
@@ -68,8 +67,8 @@ namespace SMTRPZ_IT_company.ModelView
                 return addBtnCommand ??
                     (addBtnCommand = new RelayCommand(obj =>
                     {
-                        var dep = obj as DepartamentVM;
-                        if ( string.IsNullOrEmpty(dep.DepartmentName ) )
+                        var dep = obj as DepartmentVM;
+                        if (string.IsNullOrEmpty(dep.DepartmentName))
                         {
                             return;
                         }
@@ -86,20 +85,12 @@ namespace SMTRPZ_IT_company.ModelView
                 return deleteBtnCommand ??
                     (deleteBtnCommand = new RelayCommand(obj =>
                     {
-                        var dep = obj as DepartamentVM;
+                        var dep = obj as DepartmentVM;
                         if (string.IsNullOrEmpty(dep.DepartmentName))
                         {
                             return;
                         }
-                        using (var depEmplService = new SQLDepartmentEmployeeRepository(new LabContext()))
-                        {
-                            var depEmplList = depEmplService.GetByDepartmentId( dep.DepartmentId );
 
-                            if ( depEmplList.Count > 0 )
-                            {
-                                depEmplService.DeleteRange(depEmplList);
-                            }
-                        }
                         Departments.Remove(dep);
                         depService.Delete(dep);
                     }));
@@ -114,9 +105,9 @@ namespace SMTRPZ_IT_company.ModelView
                 return updateCommand ??
                     (updateCommand = new RelayCommand(obj =>
                     {
-                        var dep = obj as DepartamentVM;
-                        
-                        if (string.IsNullOrEmpty(dep.DepartmentName) )
+                        var dep = obj as DepartmentVM;
+
+                        if (string.IsNullOrEmpty(dep.DepartmentName))
                         {
                             return;
                         }
@@ -138,15 +129,14 @@ namespace SMTRPZ_IT_company.ModelView
                 return loadedCommand ??
                     (loadedCommand = new RelayCommand(obj =>
                     {
-
-                        Departments = new ObservableCollection<DepartamentVM>( depService.GetAll() );
+                        Departments = new ObservableCollection<DepartmentVM>(depService.GetAll());
                     }));
             }
         }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));

@@ -47,13 +47,13 @@ namespace SMTRPZ_IT_company.ModelView
                 OnPropertyChanged("Employees");
             }
         }
-        private ObservableCollection<DepartamentVM> departments { get; set; }
-        public ObservableCollection<DepartamentVM> Departments
+        private ObservableCollection<DepartmentVM> departments { get; set; }
+        public ObservableCollection<DepartmentVM> Departments
         {
             get
             {
                 if (departments == null)
-                    departments = new ObservableCollection<DepartamentVM>();
+                    departments = new ObservableCollection<DepartmentVM>();
                 return departments;
             }
             set
@@ -79,13 +79,13 @@ namespace SMTRPZ_IT_company.ModelView
                 OnPropertyChanged("SelectedEmployee");
             }
         }
-        private DepartamentVM selectedDepartment { get; set; }
-        public DepartamentVM SelectedDepartment
+        private DepartmentVM selectedDepartment { get; set; }
+        public DepartmentVM SelectedDepartment
         {
             get 
             {
                 if (selectedDepartment == null)
-                    selectedDepartment = new DepartamentVM();
+                    selectedDepartment = new DepartmentVM();
                 return selectedDepartment; 
             }
             set
@@ -108,7 +108,7 @@ namespace SMTRPZ_IT_company.ModelView
                 cfg.CreateMap<DepartmentEmployee, EmployeeVM>();
             }).CreateMapper();
             employees = new ObservableCollection<EmployeeVM>( emplService.GetAll() );
-            departments = new ObservableCollection<DepartamentVM>( depService.GetAll() );
+            departments = new ObservableCollection<DepartmentVM>( depService.GetAll() );
 
         }
 

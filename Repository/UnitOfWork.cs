@@ -8,28 +8,18 @@ using System.Threading.Tasks;
 
 namespace SMTRPZ_IT_company
 {
-    public class UnitOfWork
+    public class UnitOfWork : IDisposable
     {
-        private static LabContext context;
-        private static SQLDepartmentEmployeeRepository deprtmEmplRep;
-        private static SQLDepartmentRepository departRep;
-        private static SQLEmployeeRepository emplRep;
-        private static SQLTaskRepository taskRep;
-        private static bool disposed = false;
-        private static UnitOfWork instance;
+        private LabContext context;
+        private SQLDepartmentEmployeeRepository deprtmEmplRep;
+        private SQLDepartmentRepository departRep;
+        private SQLEmployeeRepository emplRep;
+        private SQLTaskRepository taskRep;
+        private bool disposed = false;
 
-        private UnitOfWork()
+        public UnitOfWork()
         {
             context = new LabContext();
-
-        }
-        public static UnitOfWork GetInstance()
-        {
-            if( instance == null )
-            {
-                instance = new UnitOfWork();
-            }
-            return instance;
         }
 
         public SQLDepartmentEmployeeRepository departmentEmployeeRepository
@@ -38,9 +28,9 @@ namespace SMTRPZ_IT_company
             get
             {
 
-                if (UnitOfWork.deprtmEmplRep == null)
+                if (deprtmEmplRep == null)
                 {
-                    UnitOfWork.deprtmEmplRep = new SQLDepartmentEmployeeRepository(context);
+                    deprtmEmplRep = new SQLDepartmentEmployeeRepository(context);
                 }
                 return deprtmEmplRep;
             }
@@ -51,22 +41,22 @@ namespace SMTRPZ_IT_company
             get
             {
 
-                if (UnitOfWork.departRep == null)
+                if (departRep == null)
                 {
-                    UnitOfWork.departRep = new SQLDepartmentRepository(context);
+                    departRep = new SQLDepartmentRepository(context);
                 }
                 return departRep;
             }
         }
-        public SQLEmployeeRepository  employeeRepository
+        public SQLEmployeeRepository employeeRepository
         {
 
             get
             {
 
-                if (UnitOfWork.emplRep == null)
+                if (emplRep == null)
                 {
-                    UnitOfWork.emplRep = new SQLEmployeeRepository(context);
+                    emplRep = new SQLEmployeeRepository(context);
                 }
                 return emplRep;
             }
@@ -77,9 +67,9 @@ namespace SMTRPZ_IT_company
             get
             {
 
-                if (UnitOfWork.taskRep == null)
+                if (taskRep == null)
                 {
-                    UnitOfWork.taskRep = new SQLTaskRepository(context);
+                    taskRep = new SQLTaskRepository(context);
                 }
                 return taskRep;
             }
@@ -90,22 +80,27 @@ namespace SMTRPZ_IT_company
             context.SaveChanges();
         }
 
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!UnitOfWork.disposed)
-            {
-                if (disposing)
-                {
-                    context.Dispose();
-                }
-            }
-            UnitOfWork.disposed = true;
-        }
-
         public void Dispose()
         {
-            Dispose(true);
+            context.Dispose();
+
+            if (taskRep != null)
+            {
+                taskRep.Dispose();
+            }
+            if (emplRep != null)
+            {
+                emplRep.Dispose();
+            }
+            if (departRep != null)
+            {
+                departRep.Dispose();
+            }
+            if (deprtmEmplRep != null)
+            {
+                deprtmEmplRep.Dispose();
+            }
+
             GC.SuppressFinalize(this);
         }
 

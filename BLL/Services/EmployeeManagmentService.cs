@@ -13,14 +13,12 @@ namespace SMTRPZ_IT_company.BLL.Services
 {
     public class EmployeeManagmentService : IManagmentService<EmployeeVM>
     {
-        UnitOfWork unitOf;
         IMapper employeeToVMmap;
         IMapper VMtoEmployeemap;
         IMapper ToDepEmpl;
 
-       public  EmployeeManagmentService()
+        public EmployeeManagmentService()
         {
-            unitOf = UnitOfWork.GetInstance();
             employeeToVMmap = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Employee, EmployeeVM>();
@@ -38,67 +36,71 @@ namespace SMTRPZ_IT_company.BLL.Services
         }
         public void Delete(EmployeeVM employeeVM)
         {
-            var employee = unitOf.employeeRepository.GetById(employeeVM.EmployeeId);
-
-            if (employee == null)
+            using (var unitOf = new UnitOfWork())
             {
-                throw new Exception("Employee not found id DB");
+                var employee = unitOf.employeeRepository.GetById(employeeVM.EmployeeId);
+
+                if (employee == null)
+                {
+                    throw new Exception("Employee not found id DB");
+                }
+
+                var depEmpl = unitOf.departmentEmployeeRepository.GetByEmployee(employee);
+
+
+
+                if (depEmpl != null)
+                {
+                    unitOf.departmentEmployeeRepository.Delete(depEmpl);
+                }
+
+                unitOf.employeeRepository.Delete(employee.employeeId);
+
+                unitOf.Save();
             }
-
-            var depEmpl = unitOf.departmentEmployeeRepository.GetByEmployee(employee);
-
-
-
-            if( depEmpl != null  )
-            {
-                unitOf.departmentEmployeeRepository.Delete( depEmpl );
-            }
-
-            unitOf.employeeRepository.Delete(employee.employeeId);
-
-            unitOf.Save();
-
 
         }
         public void Update(EmployeeVM employeeVM)
         {
-            var employee = unitOf.employeeRepository.GetByIdDetached(employeeVM.EmployeeId);
-
-            if (employee == null)
+            using (var unitOf = new UnitOfWork())
             {
-                throw new Exception("Employee not found id DB");
+                var employee = unitOf.employeeRepository.GetByIdDetached(employeeVM.EmployeeId);
+
+                if (employee == null)
+                {
+                    throw new Exception("Employee not found id DB");
+                }
+
+                var depEmpl = unitOf.departmentEmployeeRepository.GetByEmployee(employee);
+                var newDep = unitOf.departmentRepository.GetByName(employeeVM.DepartmentName);
+
+                employee = AutomapHelper.MergeInto<Employee>(VMtoEmployeemap, employeeVM);
+
+                unitOf.employeeRepository.Update(employee);
+
+
+                if (depEmpl != null && newDep != null && depEmpl.departmentId != newDep.departmentId)
+                {
+                    unitOf.departmentEmployeeRepository.Delete(depEmpl);
+
+                    DepartmentEmployee departmentEmployee = AutomapHelper.MergeInto<DepartmentEmployee>(ToDepEmpl, employee, newDep);
+                    departmentEmployee.department = newDep;
+                    departmentEmployee.employee = employee;
+                    unitOf.departmentEmployeeRepository.Create(departmentEmployee);
+
+                }
+                else if (depEmpl == null)
+                {
+
+                    DepartmentEmployee departmentEmployee = AutomapHelper.MergeInto<DepartmentEmployee>(ToDepEmpl, employee, newDep);
+                    departmentEmployee.department = newDep;
+                    departmentEmployee.employee = employee;
+                    unitOf.departmentEmployeeRepository.Create(departmentEmployee);
+                }
+
+
+                unitOf.Save();
             }
-
-            var depEmpl = unitOf.departmentEmployeeRepository.GetByEmployee(employee);
-            var newDep = unitOf.departmentRepository.GetByName(employeeVM.DepartmentName);
-            
-            employee = AutomapHelper.MergeInto<Employee>( VMtoEmployeemap, employeeVM );
-
-            unitOf.employeeRepository.Update( employee );
-
-
-            if( depEmpl != null && newDep != null && depEmpl.departmentId != newDep.departmentId )
-            {
-                unitOf.departmentEmployeeRepository.Delete( depEmpl );
-
-                DepartmentEmployee departmentEmployee = AutomapHelper.MergeInto<DepartmentEmployee>(ToDepEmpl, employee, newDep);
-                departmentEmployee.department = newDep;
-                departmentEmployee.employee = employee;
-                unitOf.departmentEmployeeRepository.Create(departmentEmployee);
-
-            }
-            else if(depEmpl == null)
-            {
-
-                DepartmentEmployee departmentEmployee = AutomapHelper.MergeInto<DepartmentEmployee>(ToDepEmpl, employee, newDep);
-                departmentEmployee.department = newDep;
-                departmentEmployee.employee = employee;
-                unitOf.departmentEmployeeRepository.Create(departmentEmployee);
-            }
-
-
-            unitOf.Save();
-
 
         }
         public void Add(EmployeeVM employeeVM)
@@ -108,102 +110,110 @@ namespace SMTRPZ_IT_company.BLL.Services
                 tasks = new List<Model.EmplTask>()
             };
 
-            
-            if (string.IsNullOrEmpty( employeeVM.DepartmentName ))
+
+            if (string.IsNullOrEmpty(employeeVM.DepartmentName))
             {
-                //throw new Exception("Department with that name not found");
+                return;
             }
             else
             {
 
-                
 
-                Department dep = unitOf.departmentRepository.GetByName( employeeVM.DepartmentName );
-                
-                if ( dep != null )
+                using (var unitOf = new UnitOfWork())
                 {
-                    
-                    DepartmentEmployee departmentEmployee = new DepartmentEmployee()
+                    Department dep = unitOf.departmentRepository.GetByName(employeeVM.DepartmentName);
+
+                    if (dep != null)
                     {
-                        employee = employee,
-                        employeeId = employee.employeeId,
-                        department = dep,
-                        departmentId = dep.departmentId
-                    };
 
-                    unitOf.departmentEmployeeRepository.Create(departmentEmployee);
+                        DepartmentEmployee departmentEmployee = new DepartmentEmployee()
+                        {
+                            employee = employee,
+                            employeeId = employee.employeeId,
+                            department = dep,
+                            departmentId = dep.departmentId
+                        };
+
+                        unitOf.departmentEmployeeRepository.Create(departmentEmployee);
+
+                        employee.firstName = employeeVM.FirstName;
+                        employee.lastName = employeeVM.LastName;
+
+                        unitOf.employeeRepository.Create(employee);
+                        unitOf.Save();
+                    }
                 }
+
             }
-
-            employee.firstName = employeeVM.FirstName;
-            employee.lastName = employeeVM.LastName;
-
-            unitOf.employeeRepository.Create(employee);
-            unitOf.Save();
         }
         public EmployeeVM GetById(int? id)
         {
             if (id == null)
                 throw new Exception("Id of employee not set");
 
-            var employee = unitOf.employeeRepository.GetById(id.Value);
-            EmployeeVM employeeVM;
-
-            if (employee == null)
-                throw new Exception("Employee not found");
-
-            var departmentEmpl = unitOf.departmentEmployeeRepository.GetByEmployee( employee );
-
-            if (departmentEmpl == null)
+            using (var unitOf = new UnitOfWork())
             {
-                Department departament = new Department()
+                var employee = unitOf.employeeRepository.GetById(id.Value);
+                EmployeeVM employeeVM;
+
+                if (employee == null)
+                    throw new Exception("Employee not found");
+
+                var departmentEmpl = unitOf.departmentEmployeeRepository.GetByEmployee(employee);
+
+                if (departmentEmpl == null)
                 {
-                    departmentId = -1,
-                    departmentName = "None"
-                };
+                    Department departament = new Department()
+                    {
+                        departmentId = -1,
+                        departmentName = "None"
+                    };
 
-                employeeVM = AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, employee, departament);
+                    employeeVM = AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, employee, departament);
+                }
+                else
+                {
+
+                    employeeVM = AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, employee, departmentEmpl.department);
+                }
+
+                return employeeVM;
             }
-            else
-            {
-
-                employeeVM = AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, employee, departmentEmpl.department);
-            }
-
-            return employeeVM;
         }
         public IEnumerable<EmployeeVM> GetAll()
         {
             ObservableCollection<EmployeeVM> res = new ObservableCollection<EmployeeVM>();
-            var emplList = unitOf.employeeRepository.GetList();
-            var depEmplList = unitOf.departmentEmployeeRepository.GetList();
-
-            foreach ( var emp in emplList )
+            using (var unitOf = new UnitOfWork())
             {
-                var tempDE = depEmplList.FirstOrDefault( de => de.employeeId == emp.employeeId );
-                
-                if( tempDE == null )
+                var emplList = unitOf.employeeRepository.GetList();
+                var depEmplList = unitOf.departmentEmployeeRepository.GetList();
+
+                foreach (var emp in emplList)
                 {
-                    res.Add(AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, emp,
-                        new Department
-                        {
-                            departmentId = -1,
-                            departmentName = "None"
-                        }
-                        ));
-                }
-                else
-                {
-                    var dep = unitOf.departmentRepository.GetById(tempDE.departmentId);
-                    res.Add( AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, emp, dep) );
+                    var tempDE = depEmplList.FirstOrDefault(de => de.employeeId == emp.employeeId);
+
+                    if (tempDE == null)
+                    {
+                        res.Add(AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, emp,
+                            new Department
+                            {
+                                departmentId = -1,
+                                departmentName = "None"
+                            }
+                            ));
+                    }
+                    else
+                    {
+                        var dep = unitOf.departmentRepository.GetById(tempDE.departmentId);
+                        res.Add(AutomapHelper.MergeInto<EmployeeVM>(employeeToVMmap, emp, dep));
+                    }
                 }
             }
             return res;
         }
         public void Dispose()
         {
-            unitOf.employeeRepository.Dispose(true);
-            unitOf.departmentEmployeeRepository.Dispose( true );
+
         }
     }
 }

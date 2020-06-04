@@ -89,8 +89,8 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ModelView\DepartamentEmployeeVM.cs" />
-    <Compile Include="ModelView\DepartamentVM.cs" />
+    <Compile Include="ModelView\DepartmentEmployeeVM.cs" />
+    <Compile Include="ModelView\DepartmentVM.cs" />
     <Compile Include="ModelView\EmployeeVM.cs" />
     <Compile Include="ModelView\MainWindowViewModel.cs" />
     <Compile Include="ModelView\TaskEditVM.cs" />

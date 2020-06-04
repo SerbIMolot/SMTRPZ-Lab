@@ -41,7 +41,6 @@ namespace SMTRPZ_IT_company.ModelView
             }
             set
             {
-                // обработка изменения свойства
                 selectedTask = value;
                 OnPropertyChanged("SelectedTask");
             }
@@ -57,16 +56,14 @@ namespace SMTRPZ_IT_company.ModelView
             }
             set
             {
-                // обработка изменения свойства
                 passedEmployee = value;
                 OnPropertyChanged("PassedEmployee");
             }
         }
-        public UnitOfWork unit;
+
         public TaskManagmentService taskService;
         public TaskEditVM()
         {
-            unit = UnitOfWork.GetInstance();
             taskService = new TaskManagmentService();
 
             IMapper mapper = new MapperConfiguration(cfg =>
@@ -91,9 +88,10 @@ namespace SMTRPZ_IT_company.ModelView
                             return;
                         }
                         task.EmployeeId = PassedEmployee.EmployeeId;
+
                         taskService.Add(task);
-                        Console.WriteLine(task.TaskId);
-                        Tasks.Add( taskService.GetAll().SingleOrDefault( t => t.Task == task.Task && t.EmployeeId == task.EmployeeId ) );
+
+                        Tasks.Add(taskService.GetAll().SingleOrDefault(t => t.Task == task.Task && t.EmployeeId == task.EmployeeId));
                     }));
             }
         }
@@ -111,9 +109,10 @@ namespace SMTRPZ_IT_company.ModelView
                             return;
                         }
 
-
                         taskService.Update(task);
+
                         var newTask = tasks.FirstOrDefault(e => e.TaskId == task.TaskId);
+
                         if (newTask != null)
                         {
                             tasks[tasks.IndexOf(newTask)] = taskService.GetById(newTask.TaskId);
@@ -134,7 +133,6 @@ namespace SMTRPZ_IT_company.ModelView
                         {
                             return;
                         }
-
 
                         tasks.Remove(task);
                         taskService.Delete(task);

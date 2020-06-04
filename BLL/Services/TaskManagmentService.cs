@@ -12,19 +12,17 @@ namespace SMTRPZ_IT_company.BLL.Services
 {
     class TaskManagmentService : IManagmentService<TaskVM>
     {
-        UnitOfWork unitOf;
         IMapper taskVMmap;
         IMapper VMToTaskmap;
         public TaskManagmentService()
         {
-            unitOf = UnitOfWork.GetInstance();
             taskVMmap = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<EmplTask, TaskVM>();
             }).CreateMapper();
             VMToTaskmap = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<TaskVM , EmplTask>();
+                cfg.CreateMap<TaskVM, EmplTask>();
             }).CreateMapper();
         }
         public void Add(TaskVM taskVM)
@@ -35,23 +33,27 @@ namespace SMTRPZ_IT_company.BLL.Services
                 task = taskVM.Task,
                 deadLine = taskVM.DeadLine.Date
             };
-
-            unitOf.taskRepository.Create( task );
-            unitOf.Save();
+            using (var unitOf = new UnitOfWork())
+            {
+                unitOf.taskRepository.Create(task);
+                unitOf.Save();
+            }
         }
         public void Delete(TaskVM taskVM)
         {
-            var task = unitOf.taskRepository.GetById(taskVM.TaskId);
-
-            if (task == null)
+            using (var unitOf = new UnitOfWork())
             {
-                throw new Exception("Task not found id DB");
+                var task = unitOf.taskRepository.GetById(taskVM.TaskId);
+
+                if (task == null)
+                {
+                    throw new Exception("Task not found id DB");
+                }
+
+                unitOf.taskRepository.Delete(task.taskId);
+
+                unitOf.Save();
             }
-
-            unitOf.taskRepository.Delete(task.taskId);
-
-            unitOf.Save();
-
 
         }
         public TaskVM GetById(int? id)
@@ -59,49 +61,58 @@ namespace SMTRPZ_IT_company.BLL.Services
             if (id == null)
                 throw new Exception("Id of task not set");
 
-            var task = unitOf.taskRepository.GetById(id.Value);
+            using (var unitOf = new UnitOfWork())
+            {
+                var task = unitOf.taskRepository.GetById(id.Value);
 
-            if (task == null)
-                throw new Exception("task not found");
-
-
-
-            var taskVM = AutomapHelper.MergeInto<TaskVM>(taskVMmap, task );
+                if (task == null)
+                    throw new Exception("task not found");
 
 
-            return taskVM;
+                var taskVM = AutomapHelper.MergeInto<TaskVM>(taskVMmap, task);
+
+                return taskVM;
+            }
         }
         public IEnumerable<TaskVM> GetAll()
         {
             ObservableCollection<TaskVM> res = new ObservableCollection<TaskVM>();
-            var taskList = unitOf.taskRepository.GetList();
 
-
-            foreach (var task in taskList)
+            using (var unitOf = new UnitOfWork())
             {
-                res.Add(AutomapHelper.MergeInto<TaskVM>(taskVMmap, task));
+                var taskList = unitOf.taskRepository.GetList();
+
+
+                foreach (var task in taskList)
+                {
+                    res.Add(AutomapHelper.MergeInto<TaskVM>(taskVMmap, task));
+                }
             }
+
             return res;
         }
         public void Update(TaskVM taskVM)
         {
-            var task = unitOf.taskRepository.GetByIdDetached(taskVM.TaskId);
-
-            if (task == null)
+            using (var unitOf = new UnitOfWork())
             {
-                throw new Exception("Task not found id DB");
+                var task = unitOf.taskRepository.GetByIdDetached(taskVM.TaskId);
+
+                if (task == null)
+                {
+                    throw new Exception("Task not found id DB");
+                }
+
+                task = AutomapHelper.MergeInto<EmplTask>(VMToTaskmap, taskVM);
+
+                unitOf.taskRepository.Update(task);
+
+                unitOf.Save();
             }
-
-            task = AutomapHelper.MergeInto<EmplTask>(VMToTaskmap, taskVM);
-
-            unitOf.taskRepository.Update(task);
-
-            unitOf.Save();
-
         }
+
         public void Dispose()
         {
-            unitOf.taskRepository.Dispose(true);
+
         }
     }
 }
